@@ -1,6 +1,6 @@
 import CreateCustomer from "./CreateCustomer"
 import Customer from "./Customer"
-import AccountOperations from "./AccountOperations"
+import AccountOperations from "./features/accounts/AccountOperations"
 import BalanceDisplay from "./BalanceDisplay"
 
 export default function App() {
