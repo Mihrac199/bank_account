@@ -9,6 +9,8 @@ const initialStateAccount = {
      // KREDİ AMACI
      loanPurpose: "",
 
+     isLoading: false,
+
 }
 export default function accountReducer(state = initialStateAccount, action) {
 
@@ -18,8 +20,15 @@ export default function accountReducer(state = initialStateAccount, action) {
           case "account/deposit":
                return {
                     ...state,
-                    balance: state.balance + action.payload
+                    balance: state.balance + action.payload,
+                    isLoading: false
                };
+
+          case "account/convertingCurrency":
+               return {
+                    ...state,
+                    isLoading: true
+               }
 
           // PARA ÇEKME
           case "account/withdraw":
@@ -56,8 +65,23 @@ export default function accountReducer(state = initialStateAccount, action) {
 }
 
 // PARA YATIRMA 
-export function deposit(amount) {
-     return { type: "account/deposit", payload: amount }
+export function deposit(amount, currency) {
+
+     if (currency === "USD") {
+          return { type: "account/deposit", payload: amount }
+     }
+
+     return async function (dispatch, getState) {
+
+          dispatch({ type: "account/convertingCurrency" });
+
+          const res = await fetch(`https://api.frankfurter.dev/v1/latest?amount=${amount}base=${currency}&symbols=USD`);
+          const data = await res.json();
+          const converted = data.rates.USD;
+
+          dispatch({ type: "account/deposit", payload: converted })
+
+     }
 }
 
 // PARA ÇEKME
