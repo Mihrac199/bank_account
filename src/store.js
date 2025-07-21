@@ -9,4 +9,5 @@ const store = configureStore({
           account: accountReducer
      }
 })
+
 export default store;
