@@ -1,4 +1,6 @@
-const initialStateAccount = {
+import { createSlice } from "@reduxjs/toolkit"
+
+const initialState = {
 
      // HESAP BAKİYE
      balance: 0,
@@ -12,61 +14,61 @@ const initialStateAccount = {
      isLoading: false,
 
 }
-export default function accountReducer(state = initialStateAccount, action) {
 
-     switch (action.type) {
+const accountSlice = createSlice({
+
+     name: "account",
+     initialState,
+     reducers: {
 
           // PARA YATIRMA
-          case "account/deposit":
-               return {
-                    ...state,
-                    balance: state.balance + action.payload,
-                    isLoading: false
-               };
+          deposit(state, action) {
+               state.balance += action.payload;
+               state.isLoading = false;
+          },
 
-          case "account/convertingCurrency":
-               return {
-                    ...state,
-                    isLoading: true
-               }
+          convertingCurrency(state) {
+               state.isLoading = true;
+          },
 
           // PARA ÇEKME
-          case "account/withdraw":
-               return {
-                    ...state,
-                    balance: state.balance - action.payload
-               };
+          withdraw(state, action) {
+               state.balance -= action.payload;
+          },
 
           // KREDİ ÇEKME
-          case "account/requestLoan":
-               if (state.loan > 0) return state;
+          requestLoan: {
 
-               return {
-                    ...state,
-                    loan: action.payload.amount,
-                    loanPurpose: action.payload.purpose,
-                    balance: state.balance + action.payload.amount
-               };
+               prepare(amount, purpose) {
+                    return {
+                         payload: { amount, purpose }
+                    }
+               },
+
+               reducer(state, action) {
+                    if (state.loan > 0) return;
+
+                    state.loan = action.payload.amount;
+                    state.loanPurpose = action.payload.purpose;
+                    state.balance += action.payload.amount
+               },
+
+          },
 
           // KREDİ YATIRMA
-          case "account/payLoan":
-               return {
-                    ...state,
-                    balance: state.balance - state.loan,
-                    loan: 0,
-                    loanPurpose: ""
-               };
-
-          default:
-               return state;
+          payLoan(state) {
+               state.balance -= state.loan;
+               state.loan = 0;
+               state.loanPurpose = "";
+          },
 
      }
 
-}
+})
 
-// PARA YATIRMA 
+export const { withdraw, requestLoan, payLoan } = accountSlice.actions;
+
 export function deposit(amount, currency) {
-
      if (currency === "USD") {
           return { type: "account/deposit", payload: amount }
      }
@@ -84,20 +86,4 @@ export function deposit(amount, currency) {
      }
 }
 
-// PARA ÇEKME
-export function withdraw(amount) {
-     return { type: "account/withdraw", payload: amount }
-}
-
-// KREDİ ÇEKME
-export function requestLoan(amount, purpose) {
-     return {
-          type: "account/requestLoan",
-          payload: { amount: amount, purpose: purpose }
-     }
-}
-
-// KREDİ YATIRMA
-export function payLoan() {
-     return { type: "account/payLoan" }
-}
+export default accountSlice.reducer;
