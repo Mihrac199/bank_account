@@ -2,13 +2,10 @@ import { createSlice } from "@reduxjs/toolkit"
 
 const initialState = {
 
-     // HESAP BAKİYE
      balance: 0,
 
-     // KREDİ
      loan: 0,
 
-     // KREDİ AMACI
      loanPurpose: "",
 
      isLoading: false,
@@ -21,7 +18,6 @@ const accountSlice = createSlice({
      initialState,
      reducers: {
 
-          // PARA YATIRMA
           deposit(state, action) {
                state.balance += action.payload;
                state.isLoading = false;
@@ -31,12 +27,10 @@ const accountSlice = createSlice({
                state.isLoading = true;
           },
 
-          // PARA ÇEKME
           withdraw(state, action) {
                state.balance -= action.payload;
           },
 
-          // KREDİ ÇEKME
           requestLoan: {
 
                prepare(amount, purpose) {
@@ -55,7 +49,6 @@ const accountSlice = createSlice({
 
           },
 
-          // KREDİ YATIRMA
           payLoan(state) {
                state.balance -= state.loan;
                state.loan = 0;
@@ -69,6 +62,7 @@ const accountSlice = createSlice({
 export const { withdraw, requestLoan, payLoan } = accountSlice.actions;
 
 export function deposit(amount, currency) {
+
      if (currency === "USD") {
           return { type: "account/deposit", payload: amount }
      }

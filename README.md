@@ -1,3 +1,8 @@
-# Bank Account Project (React)
+# Bank Account Project
 
-Bank login and transactions real life.
+Used Technologies;
+
+     1) CSS 3
+     2) React
+          - Vite React App
+     3) Redux State
